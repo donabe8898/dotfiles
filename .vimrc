@@ -33,23 +33,40 @@ set mouse=a
 let g:termdebug_wide = 163
 "plungin===================================
 
-" PLUGIN SETTINGS
-call plug#begin('~/.vim/plugged')
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'tpope/vim-commentary'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'preservim/nerdtree'
-Plug 'https://github.com/cohama/lexima.vim'
-Plug 'ryanoasis/vim-devicons'
+call plug#begin()
+	Plug 'rhysd/vim-clang-format'
+    Plug 'Shougo/ddc.vim'
+    Plug 'vim-denops/denops.vim'
+    Plug 'Shougo/ddc-around'
+    Plug 'Shougo/ddc-matcher_head'
+	Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'tpope/vim-commentary'
+    Plug 'preservim/nerdtree'
+    Plug 'https://github.com/cohama/lexima.vim'
+    Plug 'ryanoasis/vim-devicons'
 call plug#end()
+
+" 使いたいsourceを指定する
+call ddc#custom#patch_global('sources', ['around'])
+
+" sourceOptionsのmatchersにfilter指定することで、候補の一覧を制御できる
+call ddc#custom#patch_global('sourceOptions', {
+    \ '_': {
+    \     'matchers': ['matcher_head'],
+    \ }})
+
+" ddc.vimの機能を有効にする
+call ddc#enable()
 
 " NERDTree SETTINGS
 nmap <C-f> :NERDTreeToggle<CR>
 let g:airline#extensions#tabline#enabled = 1
+
 nmap <C-p> <Plug>AirlineSelectPrevTab
 nmap <C-n> <Plug>AirlineSelectNextTab
-
+nmap <Leader>C :ClangFormatAutoToggle<CR>
+autocmd FileType c ClangFormatAutoEnable
 
 " Airline SETTINGS
 let g:airline_powerline_fonts = 1
@@ -57,6 +74,7 @@ let g:airline_powerline_fonts = 1
 " Esc SETTINGS
 inoremap jk <Esc>
 inoremap jj <Esc>
+
 
 " /// Enable Netrw (default file browser)
 " filetype plugin on
