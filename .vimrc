@@ -1,92 +1,78 @@
-set number
-set guifont=DroidSansMono\ Nerd\ Font\ 13
-set guifontwide=DroidSansMono\ Nerd\ Font\ 13
-set hlsearch
-set smartindent
-set laststatus=2
-set wildmenu
-set lines=70 columns=150
-set ruler
-set history=1000
-set encoding=utf8
-set tabstop=4
-set shiftwidth=4
-syntax enable
+" 基本設定
+set mouse=a
 
-:set autoindent
-:set smartindent
+" プラグイン ===================
+call plug#begin('~/.vim/plugged')
 
-"
-filetype on
+" Fern本体
+Plug 'lambdalisue/vim-fern'
 
-augroup vimrc
-    " 以前の autocmd コマンドをクリア
-    autocmd!
+" アイコン表示
+Plug 'lambdalisue/vim-fern-renderer-devicons'
+Plug 'ryanoasis/vim-devicons'
 
-    " C/C++/Java 言語系のファイルタイプが設定されたら cindent モードを有効にする
-    autocmd FileType c,cpp,java  setl cindent
-    autocmd FileType c,cpp,java  setl expandtab tabstop=4 shiftwidth=4 softtabstop=4 shiftround
+" Gitステータス表示
+Plug 'lambdalisue/vim-fern-git-status'
+
+" LSP
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+
+" 自動補完
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+
+" おしゃれなバー
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" コメントアウト
+Plug 'tpope/vim-commentary'
+
+" カラーテーマ
+Plug 'dracula/vim', { 'as': 'dracula' }
+
+call plug#end()
+" ===============================
+
+" 自動補完設定
+let g:asyncomplete_auto_popup = 1
+
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<BS>"
+
+
+" Fernでマウス操作
+augroup fern_custom
+  autocmd!
+  autocmd FileType fern call s:fern_init()
 augroup END
 
-packadd termdebug
-set mouse=a
-let g:termdebug_wide = 163
-"plungin===================================
-
-call plug#begin()
-	Plug 'rhysd/vim-clang-format'
-    Plug 'Shougo/ddc.vim'
-    Plug 'vim-denops/denops.vim'
-    Plug 'Shougo/ddc-around'
-    Plug 'Shougo/ddc-matcher_head'
-	Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
-    Plug 'tpope/vim-commentary'
-    Plug 'preservim/nerdtree'
-    Plug 'https://github.com/cohama/lexima.vim'
-    Plug 'ryanoasis/vim-devicons'
-call plug#end()
-
-" 使いたいsourceを指定する
-call ddc#custom#patch_global('sources', ['around'])
-
-" sourceOptionsのmatchersにfilter指定することで、候補の一覧を制御できる
-call ddc#custom#patch_global('sourceOptions', {
-    \ '_': {
-    \     'matchers': ['matcher_head'],
-    \ }})
-
-" ddc.vimの機能を有効にする
-call ddc#enable()
-
-" NERDTree SETTINGS
-nmap <C-f> :NERDTreeToggle<CR>
-let g:airline#extensions#tabline#enabled = 1
-
-nmap <C-p> <Plug>AirlineSelectPrevTab
-nmap <C-n> <Plug>AirlineSelectNextTab
-nmap <Leader>C :ClangFormatAutoToggle<CR>
-autocmd FileType c ClangFormatAutoEnable
+function! s:fern_init() abort
+  nmap <buffer> <CR> <Plug>(fern-action-open-or-expand)
+  nmap <buffer> o <Plug>(fern-action-open-or-expand)
+  " 分割表示
+  nmap <buffer> v    <Plug>(fern-action-open:vsplit)
+  nmap <buffer> s    <Plug>(fern-action-open:split)
+endfunction
 
 " Airline SETTINGS
+let g:airline#extensions#tabline#enabled = 1
 let g:airline_powerline_fonts = 1
+nmap <C-p> <Plug>AirlineSelectPrevTab
+nmap <C-n> <Plug>AirlineSelectNextTab
 
-" Esc SETTINGS
-inoremap jk <Esc>
-inoremap jj <Esc>
+" theme
+syntax enable
+
+if has('termguicolors')
+  set termguicolors
+endif
+
+colorscheme dracula
+
+" Fernのレンダラーをdeviconsに変更
+let g:fern#renderer = "devicons"
 
 
-" /// Enable Netrw (default file browser)
-" filetype plugin on
-" /// Netrw SETTINGS
-" let g:netwr_banner = 0
-" let g:netrw_liststyle = 3
-" let g:netrw_browse_split = 4
-" let g:netrw_winsize = 30
-" let g:netrw_sizestyle = "H"
-" let g:netrw_timefmt = "%Y/%m/%d(%a) %H:%M:%S"
-" let g:netrw_preview = 1
-
-"/// SPLIT BORDER SETTINGS
-hi VertSplit cterm=none
 
